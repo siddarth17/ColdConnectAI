@@ -60,7 +60,7 @@ export function AppSidebar() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold">ColdConnect AI</span>
-            <span className="text-xs text-muted-foreground">Job Outreach Tool</span>
+            <span className="text-xs text-muted-foreground">Your Outreach Tool</span>
           </div>
         </div>
       </SidebarHeader>
