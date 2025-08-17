@@ -7,13 +7,13 @@ import { useEffect } from 'react'
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
   const router = useRouter()
-
+  
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/auth/signin')
+      router.push('/landing')  // Changed from '/auth/signin' to '/landing'
     }
   }, [user, isLoading, router])
-
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -21,10 +21,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
       </div>
     )
   }
-
+  
   if (!user) {
     return null
   }
-
+  
   return <>{children}</>
 }

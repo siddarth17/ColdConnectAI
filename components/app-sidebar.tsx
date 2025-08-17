@@ -27,22 +27,22 @@ const menuItems = [
   },
   {
     title: "Cold Email",
-    url: "/cold-email",
+    url: "/dashboard/cold-email",
     icon: Mail,
   },
   {
     title: "Cover Letter",
-    url: "/cover-letter",
+    url: "/dashboard/cover-letter",
     icon: FileText,
   },
   {
     title: "Templates",
-    url: "/templates",
+    url: "/dashboard/templates",
     icon: FileTemplate,
   },
   {
     title: "Profile",
-    url: "/profile",
+    url: "/dashboard/profile",
     icon: User,
   },
 ]

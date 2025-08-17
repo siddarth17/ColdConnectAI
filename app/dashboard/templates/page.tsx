@@ -87,7 +87,7 @@ export default function TemplatesPage() {
       })
       
       // Navigate to appropriate generation page with template ID
-      const targetPage = template.type === 'Email' ? '/cold-email' : '/cover-letter'
+      const targetPage = template.type === 'Email' ? 'dashboard/cold-email' : 'dashboard/cover-letter'
       router.push(`${targetPage}?template=${template.id}`)
     } catch (error) {
       console.error('Error using template:', error)

@@ -80,16 +80,25 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+      <div className="absolute top-4 left-4">
+        <Button variant="ghost" asChild className="text-blue-600 hover:text-blue-500">
+            <Link href="/landing">
+            ← Back to Landing
+            </Link>
+        </Button>
+      </div>
       <div className="w-full max-w-md space-y-6">
         {/* Logo/Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
-            <Sparkles className="h-6 w-6 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            ColdConnect AI
-          </h1>
-          <p className="text-muted-foreground">Sign in to your account</p>
+            <Link href="/landing" className="inline-block">
+                <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-6 w-6 text-white" />
+                </div>
+            </Link>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                ColdConnect AI
+            </h1>
+            <p className="text-muted-foreground">Sign in to your account</p>
         </div>
 
         {/* Sign In Form */}

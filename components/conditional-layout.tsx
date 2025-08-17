@@ -8,14 +8,15 @@ import { ProtectedRoute } from './protected-route'
 export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   
-  // Don't protect auth pages
-  const isAuthPage = pathname?.startsWith('/auth')
+  // These pages should NOT have auth protection or sidebar
+  const publicRoutes = ['/landing', '/auth/signin', '/auth/signup']
+  const isPublicRoute = publicRoutes.includes(pathname)
   
-  if (isAuthPage) {
-    return <>{children}</>
+  if (isPublicRoute) {
+    return <>{children}</>  // No auth checks, no sidebar
   }
-
-  // Protect all other pages
+  
+  // All other routes need authentication and sidebar
   return (
     <ProtectedRoute>
       <SidebarProvider>
