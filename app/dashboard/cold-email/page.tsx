@@ -248,7 +248,7 @@ export default function ColdEmailPage() {
   }
 
   const saveEdit = async (): Promise<void> => {
-    setGeneratedEmail(editingEmail)
+    setGeneratedEmail(editingEmail) // or setGeneratedLetter(editingLetter) for cover letter page
     setIsEditing(false)
     
     // If this was already saved, update the existing record
@@ -262,16 +262,20 @@ export default function ColdEmailPage() {
           body: JSON.stringify({
             title: `${formData.role} at ${formData.companyName}`,
             company: formData.companyName,
-            type: 'Email',
-            content: editingEmail, // Save the edited content
+            type: 'Email', // or 'Letter' for cover letter page
+            content: editingEmail, // or editingLetter
             formData: formData
           }),
         });
-
+  
         if (response.ok) {
+          if (formData.recipientName && formData.companyName) {
+            await updateContactMessage(editingEmail); 
+          }
+          
           toast({
             title: "Email updated",
-            description: "Your changes have been saved to the database.",
+            description: "Your changes have been saved and contact updated.",
           })
         } else {
           throw new Error('Failed to update email')
@@ -291,6 +295,43 @@ export default function ColdEmailPage() {
       })
     }
   }
+
+  const updateContactMessage = async (newMessage: string): Promise<void> => {
+    try {
+      const contactsResponse = await fetch('/api/contacts');
+      if (contactsResponse.ok) {
+        const contactsData = await contactsResponse.json();
+        
+        // Add null safety checks
+        const contact = contactsData.contacts.find((c: any) => {
+          // Check if contact and required fields exist
+          if (!c || !c.name || !c.company || !formData.recipientName || !formData.companyName) {
+            return false;
+          }
+          
+          return (
+            c.name.toLowerCase().trim() === formData.recipientName.toLowerCase().trim() &&
+            c.company.toLowerCase().trim() === formData.companyName.toLowerCase().trim()
+          );
+        });
+        
+        if (contact) {
+          await fetch(`/api/contacts/${contact.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              originalMessage: newMessage,
+              lastContacted: new Date().toISOString()
+            }),
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error updating contact message:', error);
+    }
+  };
 
   const cancelEdit = (): void => {
     setEditingEmail("")
@@ -360,7 +401,12 @@ export default function ColdEmailPage() {
   };
 
   const saveContact = async (): Promise<void> => {
-    if (!formData.recipientName || !formData.companyName || !formData.recipientTitle) {
+    // Validate and trim inputs
+    const name = formData.recipientName?.trim();
+    const company = formData.companyName?.trim();
+    const position = formData.recipientTitle?.trim();
+  
+    if (!name || !company || !position) {
       toast({
         title: "Missing contact information",
         description: "Please fill in recipient name, company, and title.",
@@ -368,7 +414,16 @@ export default function ColdEmailPage() {
       });
       return;
     }
-
+  
+    if (!generatedEmail) {
+      toast({
+        title: "No message to associate",
+        description: "Please generate an email first before saving contact.",
+        variant: "destructive"
+      });
+      return;
+    }
+  
     setSavingContact(true);
     
     try {
@@ -378,30 +433,34 @@ export default function ColdEmailPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.recipientName,
-          company: formData.companyName,
-          position: formData.recipientTitle,
+          name, // Use trimmed version
+          company, // Use trimmed version
+          position, // Use trimmed version
+          originalMessage: generatedEmail,
+          lastMessageType: 'email',
+          status: 'contacted'
         }),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
-        if (response.status === 400 && data.error === 'Contact already exists') {
+        if (data.updated) {
           toast({
-            title: "Contact already exists",
-            description: "This contact is already in your list.",
-            variant: "destructive"
+            title: "Contact updated",
+            description: "Existing contact has been updated with new message.",
           });
+          return;
         } else {
           throw new Error(data.error || 'Failed to save contact');
         }
-        return;
       }
-
+  
       toast({
-        title: "Contact saved successfully!",
-        description: "You can find them in your People & Contacts on the dashboard.",
+        title: data.updated ? "Contact updated!" : "Contact saved successfully!",
+        description: data.updated 
+          ? "The contact has been updated with the new message."
+          : "You can manage this contact in your Network page.",
       });
     } catch (error) {
       console.error('Save contact error:', error);

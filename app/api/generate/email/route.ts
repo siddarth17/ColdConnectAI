@@ -119,7 +119,7 @@ ${recipientTitle ? `- Recipient title: ${recipientTitle}` : ''}
 INSTRUCTIONS:
 1. INTELLIGENTLY ANALYZE the candidate's background and SELECT ONLY the most relevant experiences that align with the ${role} position at ${companyName}
 2. Consider what skills, experiences, and achievements would be most valuable for this specific role and company
-3. Use the template as the foundation but personalize it completely with the candidate's MOST RELEVANT details
+3. Use the template as the foundation but personalize it completely with the candidate's MOST RELEVANT details. Also, the template might have instructions such as user specifying certain topics that you should talk about so lease analyse carefully and ensure whatever is asked in the template is implemented.
 4. Replace ALL placeholders with actual details:
    - [Company Name] → ${companyName}
    - [Role] or [Position] → ${role}

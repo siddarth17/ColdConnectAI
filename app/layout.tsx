@@ -11,7 +11,10 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "ColdConnect AI - Personalized Cold Emails & Cover Letters",
   description: "AI-powered tool for creating personalized cold emails and cover letters for job seekers",
-  generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({

@@ -39,9 +39,39 @@ const userSchema = new mongoose.Schema({
     type: [mongoose.Schema.Types.Mixed],
     default: []
   },
-  // Use the simple approach - just store as mixed/any type like templates
   history: [mongoose.Schema.Types.Mixed],
-  contacts: [mongoose.Schema.Types.Mixed],
+  // ENHANCED CONTACTS SCHEMA
+  contacts: [{
+    id: String,
+    name: String,
+    company: String,
+    position: String,
+    email: String,
+    linkedinUrl: String,
+    status: {
+      type: String,
+      enum: ['contacted', 'responded', 'no_response', 'follow_up_sent', 'connected'],
+      default: 'contacted'
+    },
+    originalMessage: String, // Store the generated email/letter
+    lastMessageType: {
+      type: String,
+      enum: ['email', 'cover_letter']
+    },
+    lastFollowUpMessage: String,
+    lastLinkedInMessage: String,
+    followUpCount: {
+      type: Number,
+      default: 0
+    },
+    notes: String,
+    createdAt: String,
+    lastContacted: String,
+    responseReceived: {
+      type: Boolean,
+      default: false
+    }
+  }],
   reminders: [mongoose.Schema.Types.Mixed],
   createdAt: {
     type: Date,

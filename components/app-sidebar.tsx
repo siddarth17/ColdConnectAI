@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAuth } from '@/lib/auth-context'
 import { Button } from "@/components/ui/button"
+import { Users } from "lucide-react" 
 
 import {
   Sidebar,
@@ -34,6 +35,11 @@ const menuItems = [
     title: "Cover Letter",
     url: "/dashboard/cover-letter",
     icon: FileText,
+  },
+  {
+    title: "Network", // ADD THIS
+    url: "/dashboard/network",
+    icon: Users,
   },
   {
     title: "Templates",

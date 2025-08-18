@@ -418,7 +418,7 @@ export default function ProfilePage() {
       <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
         Profile
       </h1>
-      <p className="text-muted-foreground">Manage your personal information and background for personalized job applications</p>
+      <p className="text-muted-foreground">Manage your personal information and background for personalized content</p>
 
       <div className="space-y-6">
         {/* Basic Information */}
