@@ -22,6 +22,8 @@ interface EmailRequest {
   purpose?: string;
   tone?: string;
   template?: string;
+  additionalNotes?: string;
+  requiredExperienceIds?: string[];
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -49,7 +51,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       recipientTitle, 
       purpose, 
       tone,
-      template
+      template,
+      additionalNotes,
+      requiredExperienceIds = [],
     } = body;
 
     // Validate required fields
@@ -96,6 +100,8 @@ EDUCATION:`;
 SKILLS: ${skills.join(', ')}`;
     }
 
+    const forcedExperiences = workExperience.filter((exp: any) => requiredExperienceIds.includes(String(exp.id)));
+
     let prompt: string;
 
     if (template) {
@@ -115,6 +121,8 @@ ${recipientName ? `- Recipient: ${recipientName}` : ''}
 ${recipientTitle ? `- Recipient title: ${recipientTitle}` : ''}
 - Email purpose: ${purpose || 'Introduction'}
 - Tone: ${tone || 'Professional'}
+${forcedExperiences.length ? `- MUST INCLUDE these experiences: ${forcedExperiences.map((exp: any) => `${exp.title} at ${exp.company}`).join('; ')}` : ''}
+${additionalNotes ? `- Additional notes from user: ${additionalNotes}` : ''}
 
 INSTRUCTIONS:
 1. INTELLIGENTLY ANALYZE the candidate's background and SELECT ONLY the most relevant experiences that align with the ${role} position at ${companyName}
@@ -126,11 +134,13 @@ INSTRUCTIONS:
    - [Your Name] → ${user.name}
    - [Recipient Name] → ${recipientName || 'Hiring Manager'}
 5. Focus on 2-3 most relevant work experiences that demonstrate fit for this role
+${forcedExperiences.length ? '5a. You MUST use the forced experiences listed above, weaving them prominently into the email.' : ''}
 6. Highlight skills and achievements that directly relate to what this position requires
 7. Research ${companyName} and incorporate specific knowledge about their business
 8. Don't mention irrelevant experiences - be selective and strategic
 9. Make it feel like it was written specifically for this exact role and company
 10. Keep the overall tone and structure of the template but make it completely personalized
+${additionalNotes ? '11. Incorporate the additional notes verbatim where relevant without breaking tone.' : ''}
 
 The goal is to show clear alignment between the candidate's background and this specific opportunity.`;
     } else {
@@ -147,12 +157,15 @@ ${recipientName ? `- Recipient: ${recipientName}` : '- Recipient: Hiring Manager
 ${recipientTitle ? `- Recipient title: ${recipientTitle}` : ''}
 - Email purpose: ${purpose || 'Introduction'}
 - Tone: ${tone || 'Professional'}
+${forcedExperiences.length ? `- MUST INCLUDE these experiences: ${forcedExperiences.map((exp: any) => `${exp.title} at ${exp.company}`).join('; ')}` : ''}
+${additionalNotes ? `- Additional notes from user: ${additionalNotes}` : ''}
 
 INSTRUCTIONS:
 1. INTELLIGENTLY ANALYZE the candidate's background and SELECT ONLY the most relevant experiences for the ${role} position at ${companyName}
 2. Consider what would be most impressive and relevant for this specific role and company
 3. Write a compelling cold email highlighting the candidate's MOST RELEVANT qualifications
 4. Focus on 2-3 work experiences that best demonstrate fit for this role
+${forcedExperiences.length ? '4a. You MUST include and highlight the forced experiences listed above.' : ''}
 5. Emphasize skills and achievements that directly relate to what this position requires
 6. Show genuine interest in ${companyName} and knowledge about their business
 7. Use a ${tone || 'professional'} tone throughout
@@ -161,6 +174,7 @@ INSTRUCTIONS:
 10. End with a clear call to action
 11. Be strategic - don't mention everything, just the most relevant and impressive details
 12. Make a clear connection between the candidate's background and this specific opportunity
+${additionalNotes ? '13. Respect and incorporate the additional notes section without changing the intended tone.' : ''}
 
 ${purpose === 'referral' ? 'IMPORTANT: This is a referral email - mention being referred by a mutual connection.' : ''}
 ${purpose === 'coffee' ? 'IMPORTANT: This is for a coffee chat - focus on learning about the company rather than applying directly.' : ''}

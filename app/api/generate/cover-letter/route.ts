@@ -20,7 +20,9 @@ interface CoverLetterRequest {
   purpose?: string;
   tone?: string;
   length?: string;
-  template?: string; 
+  template?: string;
+  additionalNotes?: string;
+  requiredExperienceIds?: string[];
 }
 
 interface CoverLetterResponse {
@@ -64,7 +66,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<CoverLett
       purpose, 
       tone,
       length,
-      template
+      template,
+      additionalNotes,
+      requiredExperienceIds = [],
     } = body;
 
     // Validate required fields
@@ -111,6 +115,8 @@ EDUCATION:`;
 SKILLS: ${skills.join(', ')}`;
     }
 
+    const forcedExperiences = workExperience.filter((exp: any) => requiredExperienceIds.includes(String(exp.id)));
+
     let prompt: string;
 
     if (template) {
@@ -129,6 +135,8 @@ ${companyWebsite ? `- Company website: ${companyWebsite}` : ''}
 - Application purpose: ${purpose || 'Application'}
 - Tone: ${tone || 'Professional'}
 - Length: ${length || 'Medium'}
+${forcedExperiences.length ? `- MUST INCLUDE these experiences: ${forcedExperiences.map((exp: any) => `${exp.title} at ${exp.company}`).join('; ')}` : ''}
+${additionalNotes ? `- Additional notes from user: ${additionalNotes}` : ''}
 
 INSTRUCTIONS:
 1. INTELLIGENTLY ANALYZE the candidate's background and SELECT ONLY the most relevant experiences for the ${role} position at ${companyName}
@@ -140,6 +148,7 @@ INSTRUCTIONS:
    - [Your Name] → ${user.name}
    - [Date] → ${new Date().toLocaleDateString()}
 5. Focus on 3-4 most relevant work experiences that demonstrate clear fit for this role
+${forcedExperiences.length ? '5a. You MUST use and highlight the forced experiences listed above.' : ''}
 6. Highlight specific achievements, skills, and qualifications that directly relate to what this position requires
 7. Research ${companyName} and incorporate specific knowledge about their business/mission
 8. Use concrete examples from the candidate's background that showcase relevant capabilities
@@ -150,6 +159,7 @@ INSTRUCTIONS:
     - Medium: 3-4 paragraphs (250-350 words)  
     - Full: 4-5 paragraphs (400-500 words)
 12. Be selective and strategic - don't mention everything, just the most relevant and impressive details
+${additionalNotes ? '13. Incorporate the additional notes wherever relevant without breaking flow or tone.' : ''}
 
 ${purpose === 'referral' ? 'IMPORTANT: This is a referral application - mention being referred by a mutual connection and how you learned about the opportunity.' : ''}
 ${purpose === 'internship' ? 'IMPORTANT: This is for an internship - focus on learning opportunities, academic background, and eagerness to gain experience.' : ''}
@@ -168,12 +178,15 @@ ${companyWebsite ? `- Company website: ${companyWebsite}` : ''}
 - Application purpose: ${purpose || 'Application'}
 - Tone: ${tone || 'Professional'}
 - Length: ${length || 'Medium'}
+${forcedExperiences.length ? `- MUST INCLUDE these experiences: ${forcedExperiences.map((exp: any) => `${exp.title} at ${exp.company}`).join('; ')}` : ''}
+${additionalNotes ? `- Additional notes from user: ${additionalNotes}` : ''}
 
 INSTRUCTIONS:
 1. INTELLIGENTLY ANALYZE the candidate's background and SELECT ONLY the most relevant experiences for the ${role} position at ${companyName}
 2. Consider what would be most impressive and relevant for this specific role and company
 3. Write a compelling cover letter highlighting the candidate's MOST RELEVANT qualifications
 4. Focus on 3-4 work experiences that best demonstrate fit for this role
+${forcedExperiences.length ? '4a. You MUST include and foreground the forced experiences listed above.' : ''}
 5. Emphasize specific achievements, skills, and qualifications that directly relate to what this position requires
 6. Use concrete examples from the candidate's background with quantifiable results where possible
 7. Show genuine enthusiasm for ${companyName} and knowledge about their business
@@ -186,6 +199,7 @@ INSTRUCTIONS:
 11. Include proper business letter formatting
 12. End with a strong closing that requests an interview
 13. Be strategic - select the most compelling and relevant details to create a strong impression
+${additionalNotes ? '14. Respect and incorporate the additional notes without altering the user’s intent.' : ''}
 
 ${purpose === 'referral' ? 'IMPORTANT: This is a referral application - mention being referred by a mutual connection and how you learned about the opportunity.' : ''}
 ${purpose === 'internship' ? 'IMPORTANT: This is for an internship - focus on learning opportunities, academic background, and eagerness to gain experience.' : ''}

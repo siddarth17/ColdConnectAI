@@ -32,6 +32,17 @@ interface FormData {
   purpose: string
   tone: string
   template: string
+  additionalNotes: string
+  priorityExperienceId: string
+}
+
+interface WorkExperience {
+  id: number
+  company: string
+  title: string
+  startDate: string
+  endDate?: string
+  description: string
 }
 
 export default function ColdEmailPage() {
@@ -49,9 +60,12 @@ export default function ColdEmailPage() {
     purpose: "",
     tone: "",
     template: "",
+    additionalNotes: "",
+    priorityExperienceId: "none",
   })
   const [templates, setTemplates] = useState<Template[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null)
+  const [workExperience, setWorkExperience] = useState<WorkExperience[]>([])
   const [generatedEmail, setGeneratedEmail] = useState<string>("")
   const [editingEmail, setEditingEmail] = useState<string>("") // For edit mode
   const [isEditing, setIsEditing] = useState<boolean>(false) // Edit mode state
@@ -67,6 +81,7 @@ export default function ColdEmailPage() {
   // Load templates on component mount
   useEffect(() => {
     fetchTemplates()
+    fetchProfileExperiences()
   }, [])
 
   // Auto-select template if templateId is provided in URL
@@ -152,6 +167,18 @@ export default function ColdEmailPage() {
     }
   }
 
+  const fetchProfileExperiences = async (): Promise<void> => {
+    try {
+      const response = await fetch('/api/profile')
+      if (response.ok) {
+        const data = await response.json()
+        setWorkExperience(data.profile.workExperience || [])
+      }
+    } catch (error) {
+      console.error('Error fetching profile experiences:', error)
+    }
+  }
+
   const handleInputChange = (field: keyof FormData, value: string): void => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
@@ -204,6 +231,8 @@ export default function ColdEmailPage() {
           purpose: formData.purpose,
           tone: formData.tone,
           template: selectedTemplate?.content || undefined,
+          additionalNotes: formData.additionalNotes || undefined,
+          requiredExperienceIds: formData.priorityExperienceId && formData.priorityExperienceId !== "none" ? [formData.priorityExperienceId] : [],
         }),
       });
   
@@ -673,6 +702,41 @@ export default function ColdEmailPage() {
                   Using template: {selectedTemplate.title}
                 </p>
               )}
+            </div>
+
+            <div>
+              <Label htmlFor="priorityExp" className="text-slate-700 dark:text-slate-300">
+                Must-Use Experience (Optional)
+              </Label>
+              <Select
+                value={formData.priorityExperienceId}
+                onValueChange={(value: string) => handleInputChange("priorityExperienceId", value)}
+              >
+                <SelectTrigger className="border-slate-200 dark:border-slate-700 focus:border-emerald-400 focus:ring-emerald-400">
+                  <SelectValue placeholder={workExperience.length ? "Choose an experience to force include" : "Add experiences in Profile first"} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {workExperience.map((exp) => (
+                    <SelectItem key={exp.id} value={String(exp.id)}>
+                      {exp.title} @ {exp.company}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="notes" className="text-slate-700 dark:text-slate-300">
+                Additional Notes for AI (Optional)
+              </Label>
+              <Textarea
+                id="notes"
+                placeholder="Any specifics, links, or talking points to include..."
+                value={formData.additionalNotes}
+                onChange={(e) => handleInputChange("additionalNotes", e.target.value)}
+                className="min-h-[100px] border-slate-200 dark:border-slate-700 focus:border-emerald-400 focus:ring-emerald-400"
+              />
             </div>
 
             <Button

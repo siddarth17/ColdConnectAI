@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Search, Filter, Edit, Trash2, Plus, Eye, Mail, FileText, Loader2 } from "lucide-react"
+import { Search, Filter, Edit, Trash2, Plus, Mail, FileText, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 
@@ -357,13 +357,6 @@ export default function TemplatesPage() {
             <CardContent className="flex-1 flex flex-col">
               <p className="text-sm text-muted-foreground line-clamp-3 mb-4 flex-1">{template.preview}</p>
               <div className="flex gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  onClick={() => handleUseTemplate(template)}
-                  className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
-                >
-                  Use Template
-                </Button>
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
@@ -372,7 +365,7 @@ export default function TemplatesPage() {
                       onClick={() => setSelectedTemplate(template)}
                       className="border-green-200 text-green-600 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-950"
                     >
-                      <Eye className="h-3 w-3" />
+                      View Template
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
@@ -399,12 +392,6 @@ export default function TemplatesPage() {
                         <div className="whitespace-pre-wrap text-sm leading-relaxed">{selectedTemplate?.content}</div>
                       </div>
                       <div className="flex gap-2">
-                        <Button
-                          onClick={() => selectedTemplate && handleUseTemplate(selectedTemplate)}
-                          className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
-                        >
-                          Use This Template
-                        </Button>
                         <Button
                           variant="outline"
                           onClick={() => {

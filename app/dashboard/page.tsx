@@ -723,19 +723,11 @@ export default function Dashboard() {
                               size="sm" 
                               variant="outline" 
                               className="flex-1 h-6 sm:h-7 text-xs bg-transparent"
-                              onClick={() => handleUseTemplate(template)}
-                            >
-                              <span className="hidden sm:inline">Use Template</span>
-                              <span className="sm:hidden">Use</span>
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 sm:h-7 w-6 sm:w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                               asChild
                             >
                               <Link href="dashboard/templates">
-                                <ArrowRight className="h-3 w-3" />
+                                <span className="hidden sm:inline">View Template</span>
+                                <span className="sm:hidden">View</span>
                               </Link>
                             </Button>
                           </div>
