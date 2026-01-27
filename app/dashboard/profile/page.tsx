@@ -46,6 +46,8 @@ export default function ProfilePage() {
   const [workExperience, setWorkExperience] = useState<WorkExperience[]>([])
   const [education, setEducation] = useState<Education[]>([])
   const [skills, setSkills] = useState<string[]>([])
+  const [resumeFile, setResumeFile] = useState<File | null>(null)
+  const [parsingResume, setParsingResume] = useState(false)
 
   const [isEditingWork, setIsEditingWork] = useState(false)
   const [isEditingEducation, setIsEditingEducation] = useState(false)
@@ -130,6 +132,57 @@ export default function ProfilePage() {
       })
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleParseResume = async () => {
+    if (!resumeFile) {
+      toast({
+        title: "No file selected",
+        description: "Please choose a resume file first.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setParsingResume(true)
+    try {
+      const formData = new FormData()
+      formData.append("file", resumeFile)
+
+      const response = await fetch('/api/profile/resume', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to parse resume')
+      }
+
+      const data = await response.json()
+
+      setProfile((prev) => ({
+        ...prev,
+        personalSummary: data.summary || prev.personalSummary
+      }))
+      setWorkExperience(data.workExperience || [])
+      setEducation(data.education || [])
+      setSkills(data.skills || [])
+
+      toast({
+        title: "Resume parsed",
+        description: "We extracted your experience, education, and skills. Remember to review and save.",
+      })
+    } catch (error) {
+      console.error('Resume parse error:', error)
+      toast({
+        title: "Parse failed",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setParsingResume(false)
     }
   }
 
@@ -488,6 +541,41 @@ export default function ProfilePage() {
                 placeholder="Brief summary of your background and career objectives..."
                 className="min-h-[100px] border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-blue-400"
               />
+            </div>
+            <div className="space-y-3 border rounded-md border-dashed border-slate-300 dark:border-slate-700 p-4 bg-slate-50/60 dark:bg-slate-900/40">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">Upload Resume (PDF/TXT/DOCX)</p>
+                  <p className="text-xs text-muted-foreground">
+                    We’ll extract experience, education, and skills automatically.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="file"
+                    accept=".pdf,.txt,.doc,.docx"
+                    className="w-60"
+                    onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={handleParseResume}
+                    disabled={parsingResume}
+                  >
+                    {parsingResume ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Parsing...
+                      </>
+                    ) : (
+                      "Parse & Fill"
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Tip: after parsing, review the fields below and click “Save Profile”.
+              </p>
             </div>
             <div className="pt-2">
               <Button

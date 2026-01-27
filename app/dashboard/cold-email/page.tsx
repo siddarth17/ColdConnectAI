@@ -9,6 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Calendar } from "@/components/ui/calendar"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Copy, Edit, Save, RefreshCw, CalendarPlus, Sparkles, UserPlus, Check, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useSearchParams } from "next/navigation"
@@ -33,7 +41,7 @@ interface FormData {
   tone: string
   template: string
   additionalNotes: string
-  priorityExperienceId: string
+  priorityExperienceIds: string[]
 }
 
 interface WorkExperience {
@@ -61,7 +69,7 @@ export default function ColdEmailPage() {
     tone: "",
     template: "",
     additionalNotes: "",
-    priorityExperienceId: "none",
+    priorityExperienceIds: [],
   })
   const [templates, setTemplates] = useState<Template[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null)
@@ -128,7 +136,15 @@ export default function ColdEmailPage() {
         if (historyItem) {
           // Restore form data
           if (historyItem.formData) {
-            setFormData(historyItem.formData)
+            const restored = historyItem.formData
+            setFormData({
+              ...restored,
+              priorityExperienceIds: Array.isArray(restored.priorityExperienceIds)
+                ? restored.priorityExperienceIds
+                : restored.priorityExperienceId
+                  ? [String(restored.priorityExperienceId)]
+                  : [],
+            })
           }
           
           // Restore generated content
@@ -232,7 +248,7 @@ export default function ColdEmailPage() {
           tone: formData.tone,
           template: selectedTemplate?.content || undefined,
           additionalNotes: formData.additionalNotes || undefined,
-          requiredExperienceIds: formData.priorityExperienceId && formData.priorityExperienceId !== "none" ? [formData.priorityExperienceId] : [],
+          requiredExperienceIds: formData.priorityExperienceIds?.length ? formData.priorityExperienceIds : [],
         }),
       });
   
@@ -704,26 +720,55 @@ export default function ColdEmailPage() {
               )}
             </div>
 
-            <div>
-              <Label htmlFor="priorityExp" className="text-slate-700 dark:text-slate-300">
-                Must-Use Experience (Optional)
+            <div className="space-y-2">
+              <Label className="text-slate-700 dark:text-slate-300">
+                Must-Use Experiences (Optional)
               </Label>
-              <Select
-                value={formData.priorityExperienceId}
-                onValueChange={(value: string) => handleInputChange("priorityExperienceId", value)}
-              >
-                <SelectTrigger className="border-slate-200 dark:border-slate-700 focus:border-emerald-400 focus:ring-emerald-400">
-                  <SelectValue placeholder={workExperience.length ? "Choose an experience to force include" : "Add experiences in Profile first"} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  {workExperience.map((exp) => (
-                    <SelectItem key={exp.id} value={String(exp.id)}>
-                      {exp.title} @ {exp.company}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {workExperience.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Add work experiences in your Profile to select them here.
+                </p>
+              ) : (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between border-slate-200 dark:border-slate-700"
+                    >
+                      {formData.priorityExperienceIds.length
+                        ? `${formData.priorityExperienceIds.length} selected`
+                        : "Select experiences to force-include"}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-80">
+                    <DropdownMenuLabel>Select experiences</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {workExperience.map((exp) => {
+                      const id = String(exp.id)
+                      const checked = formData.priorityExperienceIds.includes(id)
+                      return (
+                        <DropdownMenuCheckboxItem
+                          key={id}
+                          checked={checked}
+                          onCheckedChange={() => {
+                            setFormData((prev) => {
+                              const current = prev.priorityExperienceIds || []
+                              return checked
+                                ? { ...prev, priorityExperienceIds: current.filter((v) => v !== id) }
+                                : { ...prev, priorityExperienceIds: [...current, id] }
+                            })
+                          }}
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm">{exp.title}</span>
+                            <span className="text-xs text-muted-foreground">{exp.company}</span>
+                          </div>
+                        </DropdownMenuCheckboxItem>
+                      )
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
 
             <div>

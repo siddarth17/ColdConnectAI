@@ -73,6 +73,23 @@ const userSchema = new mongoose.Schema({
     }
   }],
   reminders: [mongoose.Schema.Types.Mixed],
+  stories: [{
+    id: String,
+    title: String,
+    points: [String],
+    createdAt: String,
+    updatedAt: String
+  }],
+  interviews: [{
+    id: String,
+    question: String,
+    answer: String,
+    storiesUsed: [String],
+    experienceIds: [String],
+    additionalNotes: String,
+    createdAt: String,
+    updatedAt: String
+  }],
   createdAt: {
     type: Date,
     default: Date.now,

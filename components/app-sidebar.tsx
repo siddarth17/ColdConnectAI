@@ -1,6 +1,6 @@
 "use client"
 
-import { FileText, Mail, User, LayoutDashboard, FileIcon as FileTemplate, LogOut } from "lucide-react"
+import { FileText, Mail, User, LayoutDashboard, FileIcon as FileTemplate, LogOut, BookOpen, MessageSquare, Wand2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAuth } from '@/lib/auth-context'
@@ -50,6 +50,21 @@ const menuItems = [
     title: "Profile",
     url: "/dashboard/profile",
     icon: User,
+  },
+  {
+    title: "Stories",
+    url: "/dashboard/stories",
+    icon: BookOpen,
+  },
+  {
+    title: "Interviews",
+    url: "/dashboard/interviews",
+    icon: MessageSquare,
+  },
+  {
+    title: "Tailor",
+    url: "/dashboard/tailor",
+    icon: Wand2,
   },
 ]
 
