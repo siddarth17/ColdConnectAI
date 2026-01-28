@@ -60,14 +60,14 @@ export default function LandingPage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="text-center">
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6">
-            Supercharge Your Outreach and
+            Supercharge Your Recruiting and
             <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
-              Stand Out
+              Get Hired Faster
             </span>
           </h1>
           
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Stop sending generic messages that get ignored. ColdConnect AI crafts personalized outreach emails and cover letters by analyzing your background and tailoring each message to the recipient, helping you connect more effectively and get noticed.
+            Stop sending generic applications. ColdConnect AI tailors your resume bullets to each JD, crafts role-specific emails and cover letters, and prepares interview answers from your profile and stories.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -90,10 +90,10 @@ export default function LandingPage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Why ColdConnect AI?
+            Why ColdConnect AI for Recruiting?
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Transform your outreach with intelligent personalization
+            Transform your recruiting with intelligent personalization
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export default function LandingPage() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 dark:text-gray-300">
-                Our smart AI analyzes your complete profile and automatically emphasizes your most relevant experiences for each specific role and company.
+                Our smart AI analyzes your profile to emphasize the most relevant experiences for each role, and now even rewrites resume bullets to match each job description.
               </p>
             </CardContent>
           </Card>
@@ -219,9 +219,9 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">2</span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Enter Job Details</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Target a Job</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Specify the recipient, company, and tone. Optionally use your saved templates as starting points.
+                Paste the job description, select experiences, and let AI tailor your bullets, emails, and letters.
               </p>
             </div>
 
@@ -232,7 +232,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">AI Creates Magic</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Our AI intelligently selects your most relevant qualifications and crafts compelling, personalized content.
+                Our AI aligns your bullets, drafts outreach, and prepares interview answers using your stories.
               </p>
             </div>
 
