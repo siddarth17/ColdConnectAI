@@ -239,7 +239,12 @@ Focus on quality over quantity - demonstrate clear fit between the candidate's b
       max_tokens: length === 'short' ? 400 : length === 'full' ? 800 : 600,
     });
 
-    const generatedLetter = completion.choices[0].message.content;
+    const sanitize = (text: string) =>
+      (text || "")
+        .replace(/\*\*(.*?)\*\*/g, "$1")
+        .replace(/__([^_]+)__/g, "$1")
+        .replace(/[\u2013\u2014]/g, "-")
+    const generatedLetter = sanitize(completion.choices[0].message.content || "");
 
     if (!generatedLetter) {
       throw new Error('No content generated');

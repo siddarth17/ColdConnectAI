@@ -176,7 +176,12 @@ ${user.name}`;
       max_tokens: type === 'linkedin' ? 150 : 400,
     });
 
-    const generatedContent = completion.choices[0].message.content;
+    const sanitize = (text: string) =>
+      (text || "")
+        .replace(/\*\*(.*?)\*\*/g, "$1")
+        .replace(/__([^_]+)__/g, "$1")
+        .replace(/[\u2013\u2014]/g, "-")
+    const generatedContent = sanitize(completion.choices[0].message.content || "");
     if (!generatedContent) {
       throw new Error('No content generated');
     }

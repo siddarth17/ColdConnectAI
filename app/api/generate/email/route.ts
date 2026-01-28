@@ -210,7 +210,13 @@ Focus on quality over quantity - select the most compelling and relevant details
       max_tokens: 600,
     });
 
-    const generatedEmail = completion.choices[0].message.content;
+    const sanitize = (text: string) =>
+      (text || "")
+        .replace(/\*\*(.*?)\*\*/g, "$1") // remove bold markdown
+        .replace(/__([^_]+)__/g, "$1")   // remove underline markdown
+        .replace(/[\u2013\u2014]/g, "-"); // replace en/em dashes with hyphen
+
+    const generatedEmail = sanitize(completion.choices[0].message.content || "");
 
     if (!generatedEmail) {
       throw new Error('No content generated');
