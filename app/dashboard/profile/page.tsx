@@ -743,7 +743,7 @@ export default function ProfilePage() {
                       </Button>
                     </div>
                   </div>
-                  <p className="text-sm leading-relaxed">{work.description}</p>
+                  <p className="text-sm leading-relaxed whitespace-pre-line">{work.description}</p>
                 </div>
               ))}
               {workExperience.length === 0 && (
