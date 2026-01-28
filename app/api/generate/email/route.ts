@@ -104,9 +104,12 @@ SKILLS: ${skills.join(', ')}`;
 
     let prompt: string;
 
+    const noHeader = "Do NOT add headers like name, address, phone, or email. Start directly with the greeting and body per the template."
+    const templateObedience = "Strictly preserve the template's structure and paragraph order. Do not add or remove paragraphs. Only replace placeholders and rewrite within existing paragraphs."
+
     if (template) {
       // Use template-based generation with intelligent content selection
-      prompt = `You are an expert at personalizing email templates for job applications. You have the candidate's complete background and need to intelligently select and emphasize the most relevant experiences, skills, and achievements for this specific role and company.
+      prompt = `You are an expert at personalizing email templates for job applications. ${noHeader} ${templateObedience} You have the candidate's complete background and need to intelligently select and emphasize the most relevant experiences, skills, and achievements for this specific role and company.
 
 ${userContext}
 
@@ -127,7 +130,7 @@ ${additionalNotes ? `- Additional notes from user: ${additionalNotes}` : ''}
 INSTRUCTIONS:
 1. INTELLIGENTLY ANALYZE the candidate's background and SELECT ONLY the most relevant experiences that align with the ${role} position at ${companyName}
 2. Consider what skills, experiences, and achievements would be most valuable for this specific role and company
-3. Use the template as the foundation but personalize it completely with the candidate's MOST RELEVANT details. Also, the template might have instructions such as user specifying certain topics that you should talk about so lease analyse carefully and ensure whatever is asked in the template is implemented.
+3. Use the template as the foundation but personalize it completely with the candidate's MOST RELEVANT details. Follow the template instructions exactly; do not introduce new sections.
 4. Replace ALL placeholders with actual details:
    - [Company Name] → ${companyName}
    - [Role] or [Position] → ${role}
@@ -139,7 +142,7 @@ ${forcedExperiences.length ? '5a. You MUST use the forced experiences listed abo
 7. Research ${companyName} and incorporate specific knowledge about their business
 8. Don't mention irrelevant experiences - be selective and strategic
 9. Make it feel like it was written specifically for this exact role and company
-10. Keep the overall tone and structure of the template but make it completely personalized
+10. Keep the overall tone and structure of the template but make it completely personalized; preserve paragraph count/order.
 ${additionalNotes ? '11. Incorporate the additional notes verbatim where relevant without breaking tone.' : ''}
 
 The goal is to show clear alignment between the candidate's background and this specific opportunity.`;

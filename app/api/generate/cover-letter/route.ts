@@ -119,9 +119,12 @@ SKILLS: ${skills.join(', ')}`;
 
     let prompt: string;
 
+    const headerGuard = "Do NOT include headers like name, address, phone, email, date, or company address. Start directly with the greeting (e.g., 'Dear Hiring Manager,')."
+    const templateObedience = "Strictly preserve the template's structure and paragraph order. Do not add or remove paragraphs; only replace placeholders and rewrite within existing paragraphs."
+
     if (template) {
       // Use template-based generation with intelligent content selection
-      prompt = `You are an expert at personalizing cover letter templates for job applications. You have the candidate's complete background and need to intelligently select and emphasize the most relevant experiences, skills, and achievements for this specific role and company.
+      prompt = `You are an expert at personalizing cover letter templates for job applications. ${headerGuard} ${templateObedience} You have the candidate's complete background and need to intelligently select and emphasize the most relevant experiences, skills, and achievements for this specific role and company.
 
 ${userContext}
 
@@ -139,6 +142,8 @@ ${forcedExperiences.length ? `- MUST INCLUDE these experiences: ${forcedExperien
 ${additionalNotes ? `- Additional notes from user: ${additionalNotes}` : ''}
 
 INSTRUCTIONS:
+0. ${headerGuard}
+0b. ${templateObedience}
 1. INTELLIGENTLY ANALYZE the candidate's background and SELECT ONLY the most relevant experiences for the ${role} position at ${companyName}
 2. Consider what experiences, skills, and achievements would be most valuable for this specific role and company
 3. Use the template as the foundation but personalize it completely with the candidate's MOST RELEVANT details
@@ -167,7 +172,7 @@ ${purpose === 'internship' ? 'IMPORTANT: This is for an internship - focus on le
 The goal is to demonstrate clear alignment between the candidate's background and this specific opportunity.`;
     } else {
       // Use AI generation without template but with intelligent content selection
-      prompt = `You are an expert at writing compelling, professional cover letters. You have the candidate's complete background and need to intelligently select and emphasize the most relevant experiences, skills, and achievements for this specific role and company.
+      prompt = `You are an expert at writing compelling, professional cover letters. ${headerGuard} You have the candidate's complete background and need to intelligently select and emphasize the most relevant experiences, skills, and achievements for this specific role and company.
 
 ${userContext}
 
@@ -182,6 +187,7 @@ ${forcedExperiences.length ? `- MUST INCLUDE these experiences: ${forcedExperien
 ${additionalNotes ? `- Additional notes from user: ${additionalNotes}` : ''}
 
 INSTRUCTIONS:
+0. ${headerGuard}
 1. INTELLIGENTLY ANALYZE the candidate's background and SELECT ONLY the most relevant experiences for the ${role} position at ${companyName}
 2. Consider what would be most impressive and relevant for this specific role and company
 3. Write a compelling cover letter highlighting the candidate's MOST RELEVANT qualifications
